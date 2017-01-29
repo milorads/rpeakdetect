@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import scipy.signal
 import scipy.ndimage
+import peakutils
 
 def detect_beats(
 		ecg,	# The raw ECG signal
@@ -72,8 +73,14 @@ def plot_peak_detection(ecg, rate):
 	plt.plot(t, ecg)
 
 	peak_i = detect_beats(ecg, rate)
+	indexes = peakutils.indexes(ecg, thres=0.02/max(peak_i), min_dist=50)
+	#interpolatedIndexes = peakutils.interpolate(range(0, len(ecg)), ecg, ind=indexes)
+    
+	plt.scatter(t[indexes], ecg[indexes], color='green')
+
+	#plt.scatter(t[interpolatedIndexes], ecg[interpolatedIndexes], color='cyan')
 	plt.scatter(t[peak_i], ecg[peak_i], color='red')
-	plt.show()
+	plt.show(block=True)
 
 if __name__ == '__main__':
 	rate = float(sys.argv[1])
